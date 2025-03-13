@@ -11,10 +11,8 @@ import ru.itmo.vk.hash.MD5HashFunction;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ClientTest {
@@ -60,7 +58,7 @@ class ClientTest {
         client.refreshSchema();
         Node result = client.getNode("key3");
 
-        assertNotNull(result);
+        assertThat(result, is(notNullValue()));
     }
 
     @Test
@@ -71,7 +69,7 @@ class ClientTest {
 
         client.refreshSchema();
 
-        assertEquals(2, client.getCircle().size());
+        assertThat(client.getCircle().size(), is(2));
     }
 
     @Test
@@ -80,7 +78,7 @@ class ClientTest {
 
         Node result = client.getNode("key4");
 
-        assertNull(result);
+        assertThat(result, is(nullValue()));
     }
 
     @Test
