@@ -1,8 +1,5 @@
 package ru.itmo.vk.client;
 
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.SuperBuilder;
-
 public class Node extends AbstractNode{
     public Node(String address) {
         super(address);
