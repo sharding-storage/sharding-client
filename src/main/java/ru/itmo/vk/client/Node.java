@@ -13,4 +13,8 @@ public class Node extends AbstractNode{
         return null; // stub
     }
 
+    @Override
+    public String getAddress() {
+        return super.getAddress();
+    }
 }

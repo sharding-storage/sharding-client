@@ -9,4 +9,8 @@ public abstract class AbstractNode {
     protected AbstractNode(String address) {
         this.address = address;
     }
+
+    public String getAddress() {
+        return address;
+    }
 }

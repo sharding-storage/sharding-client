@@ -34,10 +34,15 @@ public class Client {
     public void setValue(String key, String value) {
         var node = getNode(key);
 
-        node.setValue(key, value);
+        try {
+            node.setValue(key, value);
+        } catch (Exception e) {
+            refreshSchema();
+            node.setValue(key, value);
+        }
     }
 
-    private Node getNode(String key) {
+    public Node getNode(String key) {
         if (circle.isEmpty()) {
             return null;
         }
@@ -52,7 +57,11 @@ public class Client {
     public void refreshSchema() {
         circle.clear();
         masterNode.refreshSchema().forEach((node) -> {
-            circle.put(hashFunction.hash(node.toString()), node);
+            circle.put(hashFunction.hash(node.getAddress()), node);
         });
+    }
+
+    public SortedMap<Integer, Node> getCircle() {
+        return circle;
     }
 }
