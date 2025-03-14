@@ -3,6 +3,7 @@ package ru.itmo.vk.command;
 import lombok.Getter;
 import ru.itmo.vk.client.Client;
 
+@Getter
 public abstract class Command {
     public static final String NAME = "";
 
@@ -21,9 +22,5 @@ public abstract class Command {
 
     public void helpInfo() {
         System.out.println();
-    }
-
-    public Client getClient() {
-        return client;
     }
 }
