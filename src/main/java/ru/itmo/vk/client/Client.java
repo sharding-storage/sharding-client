@@ -1,5 +1,7 @@
 package ru.itmo.vk.client;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.itmo.vk.hash.HashFunction;
 
@@ -7,16 +9,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 @Slf4j
+@Getter
+@RequiredArgsConstructor
 public class Client {
     private final SortedMap<Integer, Node> circle = new TreeMap<>();
 
     private final HashFunction hashFunction;
     private final MasterNode masterNode;
-
-    public Client(HashFunction hashFunction, MasterNode masterNode) {
-        this.hashFunction = hashFunction;
-        this.masterNode = masterNode;
-    }
 
     public String getValue(String key) {
         var node = getNode(key);
@@ -34,10 +33,15 @@ public class Client {
     public void setValue(String key, String value) {
         var node = getNode(key);
 
-        node.setValue(key, value);
+        try {
+            node.setValue(key, value);
+        } catch (Exception e) {
+            refreshSchema();
+            node.setValue(key, value);
+        }
     }
 
-    private Node getNode(String key) {
+    public Node getNode(String key) {
         if (circle.isEmpty()) {
             return null;
         }
@@ -52,7 +56,7 @@ public class Client {
     public void refreshSchema() {
         circle.clear();
         masterNode.refreshSchema().forEach((node) -> {
-            circle.put(hashFunction.hash(node.toString()), node);
+            circle.put(hashFunction.hash(node.getAddress()), node);
         });
     }
 }
