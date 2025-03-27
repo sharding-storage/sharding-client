@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package sharding;
+
+import "google/protobuf/empty.proto";
+
+service MasterNode {
+  rpc refreshSchema (google.protobuf.Empty) returns (SchemaReply) {}
+}
+
+message SchemaReply {
+  repeated string message = 1;
+}
+
+service Node {
+   rpc getValue (KeyRequest) returns (ValueReply) {}
+   rpc setValue (KeyValueRequest) returns (google.protobuf.Empty) {}
+}
+
+message KeyRequest {
+    string key = 1;
+}
+
+message KeyValueRequest {
+    string key = 1;
+    string value = 2;
+}
+
+message ValueReply {
+    string value = 1;
+}
