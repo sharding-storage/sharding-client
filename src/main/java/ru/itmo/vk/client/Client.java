@@ -50,6 +50,7 @@ public class Client {
             var tailMap = circle.tailMap(hash);
             hash = tailMap.isEmpty() ? circle.firstKey() : tailMap.firstKey();
         }
+
         return circle.get(hash);
     }
 
