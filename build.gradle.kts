@@ -1,6 +1,8 @@
 plugins {
     id("java")
     id("com.google.protobuf") version "0.9.4"
+    id("application")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "ru.itmo.vk"
@@ -80,3 +82,12 @@ sourceSets {
     }
 }
 
+application {
+    mainClass.set("ru.itmo.vk.Main")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ru.itmo.vk.Main"
+    }
+}
