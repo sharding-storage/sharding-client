@@ -1,7 +1,9 @@
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
 import ru.itmo.vk.client.Client;
 import ru.itmo.vk.client.MasterNode;
 import ru.itmo.vk.client.Node;
@@ -14,11 +16,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ClientTest {
 
-    HashMap<Node, List<String>> valuesCount;
+    /*HashMap<Node, List<String>> valuesCount;
     HashMap<Node, Integer> values;
 
     private final int SIZE = 100000;
@@ -67,13 +71,13 @@ class ClientTest {
         System.out.println(values.values().stream().reduce(Integer::sum));
         System.out.println(values);
         System.out.println(sums);
-    }
+    }*/
 
     private Client client;
     private HashFunction hashFunction;
     private MasterNode masterNode;
 
-    /*@BeforeEach
+    @BeforeEach
     void setUp() {
         hashFunction = Mockito.spy(MD5HashFunction.class);
         masterNode = Mockito.mock(MasterNode.class);
@@ -85,7 +89,7 @@ class ClientTest {
         Node node1 = new Node("192.168.1.147:5001");
         Node node2 = new Node("192.168.1.147:5002");
         when(hashFunction.hash("key3")).thenReturn(789);
-        when(masterNode.refreshSchema()).thenReturn(List.of(node1, node2));
+        when(masterNode.getNodes()).thenReturn(List.of(node1, node2));
 
         client.refreshSchema();
         Node result = client.getNode("key3");
@@ -97,7 +101,7 @@ class ClientTest {
     void testRefreshSchema() {
         Node node1 = new Node("192.168.1.147:5001");
         Node node2 = new Node("192.168.1.147:5002");
-        when(masterNode.refreshSchema()).thenReturn(List.of(node1, node2));
+        when(masterNode.getNodes()).thenReturn(List.of(node1, node2));
 
         client.refreshSchema();
 
@@ -120,5 +124,5 @@ class ClientTest {
         String result = client.getValue("key5");
 
         assertThat(result, is(nullValue()));
-    }*/
+    }
 }

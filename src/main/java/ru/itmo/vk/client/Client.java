@@ -56,8 +56,36 @@ public class Client {
 
     public void refreshSchema() {
         circle.clear();
-        masterNode.refreshSchema().forEach((node) -> {
+        masterNode.refreshSchema();
+
+        masterNode.getNodes().forEach((node) -> {
             circle.put(hashFunction.hash(node.getAddress()), node);
         });
     }
+
+    public String addServer(String address) {
+        try {
+            return masterNode.addServer(address);
+        } catch (Exception e){
+            return "Can't access server: " + e.getMessage();
+        }
+    }
+
+    public String deleteServer(String address) {
+        try {
+            return masterNode.deleteServer(address);
+        } catch (Exception e){
+            return "Can't access server: " + e.getMessage();
+        }
+    }
+
+    public String changeShards(int count) {
+        try {
+            return masterNode.changeShards(count);
+        } catch (Exception e){
+            return "Can't access server: " + e.getMessage();
+        }
+    }
+
+
 }
