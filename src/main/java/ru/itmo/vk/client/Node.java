@@ -17,8 +17,7 @@ public class Node extends AbstractNode{
 
         var ip = address.split(":");
         client.setHost(ip[0]);
-        client.setPort( Integer.parseInt(ip[1]));
-        client.setPort(8000);
+        client.setPort(Integer.parseInt(ip[1]));
 
         storageApi = new StorageApi(client);
     }
