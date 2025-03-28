@@ -48,12 +48,6 @@ public class MasterNode extends AbstractNode {
 
         nodes = addresses.stream()
             .map(Node::new).toList();
-
-//        return List.of(
-//            new Node("192.168.1.147:5001"),
-//            new Node("192.168.1.147:5002"),
-//            new Node("192.168.1.147:5003")
-//        );
     }
 
     @SneakyThrows
