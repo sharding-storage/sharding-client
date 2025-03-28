@@ -1,6 +1,9 @@
 plugins {
     id("java")
     id("org.openapi.generator") version "6.6.0"
+    id("com.google.protobuf") version "0.9.4"
+    id("application")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "ru.itmo.vk"
@@ -100,3 +103,12 @@ tasks.compileJava {
     dependsOn(tasks.openApiGenerate)
 }
 
+application {
+    mainClass.set("ru.itmo.vk.Main")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ru.itmo.vk.Main"
+    }
+}
