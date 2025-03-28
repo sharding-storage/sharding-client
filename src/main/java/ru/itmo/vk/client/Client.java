@@ -50,13 +50,48 @@ public class Client {
             var tailMap = circle.tailMap(hash);
             hash = tailMap.isEmpty() ? circle.firstKey() : tailMap.firstKey();
         }
+
         return circle.get(hash);
     }
 
     public void refreshSchema() {
         circle.clear();
-        masterNode.refreshSchema().forEach((node) -> {
+        masterNode.refreshSchema();
+
+        masterNode.getNodes().forEach((node) -> {
             circle.put(hashFunction.hash(node.getAddress()), node);
         });
     }
+
+    public String addServer(String address) {
+        try {
+            var ans =  masterNode.addServer(address);
+            masterNode.refreshSchema();
+            return ans;
+        } catch (Exception e){
+            return "Can't access server: " + e.getMessage();
+        }
+    }
+
+    public String deleteServer(String address) {
+        try {
+            var ans = masterNode.deleteServer(address);
+            masterNode.refreshSchema();
+            return ans;
+        } catch (Exception e){
+            return "Can't access server: " + e.getMessage();
+        }
+    }
+
+    public String changeShards(int count) {
+        try {
+            var ans = masterNode.changeShards(count);
+            masterNode.refreshSchema();
+            return ans;
+        } catch (Exception e){
+            return "Can't access server: " + e.getMessage();
+        }
+    }
+
+
 }

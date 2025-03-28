@@ -1,31 +1,38 @@
 package ru.itmo.vk.client;
 
-import sharding.NodeGrpc;
-import static sharding.Database.*;
+import lombok.SneakyThrows;
+import ru.itmo.sharding.api.StorageApi;
+import ru.itmo.sharding.invoker.ApiClient;
+import ru.itmo.sharding.model.KeyValueRequest;
 
 public class Node extends AbstractNode{
-    private final NodeGrpc.NodeBlockingStub nodeClient;
+
+    private final StorageApi storageApi;
 
     public Node(String address) {
         super(address);
-        nodeClient = NodeGrpc.newBlockingStub(getChannel());
+
+        var client = new ApiClient();
+        client.setScheme("http");
+
+        var ip = address.split(":");
+        client.setHost(ip[0]);
+        client.setPort(Integer.parseInt(ip[1]));
+
+        storageApi = new StorageApi(client);
     }
 
+    @SneakyThrows
     public String getValue(String key) {
-        KeyRequest request = KeyRequest.newBuilder()
-            .setKey(key)
-            .build();
-
-        //return nodeClient.getValue(request).getValue();
-        return null; //stub
+        return storageApi.getValue(key).getValue();
     }
 
+    @SneakyThrows
     public void setValue(String key, String value) {
-        KeyValueRequest request = KeyValueRequest.newBuilder()
-            .setKey(key)
-            .setValue(value)
-            .build();
+        var request = new KeyValueRequest();
+        request.setValue(value);
 
-        //nodeClient.setValue(request);
+        storageApi.setValue(key, request);
     }
+
 }

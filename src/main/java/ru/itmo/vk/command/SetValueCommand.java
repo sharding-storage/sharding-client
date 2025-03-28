@@ -12,7 +12,8 @@ public class SetValueCommand extends Command {
     @Override
     public void execute(Object... args) {
         if (args.length != 2) {
-            throw new IllegalArgumentException("Неправильное количество аргументов");
+            System.out.println("Неправильное количество аргументов");
+            throw new IllegalArgumentException();
         }
 
         super.getClient().setValue((String) args[0], (String) args[1]);

@@ -21,7 +21,7 @@ jobs:
           cache: 'gradle'
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean shadowJar -x test
 
       - name: Run Tests
         run: ./gradlew test

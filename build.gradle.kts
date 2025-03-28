@@ -1,8 +1,7 @@
 plugins {
     id("java")
-    id("com.google.protobuf") version "0.9.4"
-    id("application")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("org.openapi.generator") version "6.6.0"
+    id("com.github.johnrengelman.shadow") version "8.0.0"
 }
 
 group = "ru.itmo.vk"
@@ -13,12 +12,18 @@ repositories {
 }
 
 dependencies {
-
-    implementation("io.grpc:grpc-netty-shaded:1.58.0")
-    implementation("io.grpc:grpc-protobuf:1.58.0")
-    implementation("io.grpc:grpc-stub:1.58.0")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
-    implementation("com.google.protobuf:protobuf-java:3.24.4")
+    implementation("dev.mccue:guava-hash:33.4.0")
+
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.8")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.3")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.15.3")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.15.3")
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
+
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+    implementation("javax.validation:validation-api:2.0.1.Final")
 
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("ch.qos.logback:logback-classic:1.4.11")
@@ -50,44 +55,66 @@ tasks.test {
     )
 }
 
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.24.4"
-    }
-    plugins {
-        create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
-        }
-    }
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                if (!task.builtins.any { it.name == "java" }) {
-                    create("java")
-                }
-            }
-            task.plugins {
-                create("grpc") // Генерация gRPC-кода
-            }
-        }
-    }
+sourceSets.main {
+    java.srcDirs(
+        "src/main/java",
+        "${layout.buildDirectory.get()}/generated/src/main/java"
+    )
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs("build/generated/source/proto/main/grpc")
-            srcDirs("build/generated/source/proto/main/java")
-        }
-    }
+openApiGenerate {
+    generatorName.set("java")
+    inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
+    outputDir.set("${layout.buildDirectory.get()}/generated")
+    apiPackage.set("ru.itmo.sharding.api")
+    modelPackage.set("ru.itmo.sharding.model")
+    invokerPackage.set("ru.itmo.sharding.invoker")
+    library.set("native")
+    configOptions.set(
+        mapOf(
+            "library" to "native",
+            "hideGenerationTimestamp" to "true",
+            "openApiNullable" to "false",
+            //"dateLibrary" to "java8",
+            //"java8" to "true",
+            //"interfaceOnly" to "true",
+            //"useTags" to "true",
+            //"useSpringBoot3" to "true",
+            //"reactive" to "false",
+            //"serializationLibrary" to "jackson",
+            //"useBeanValidation" to "true",
+        )
+    )
+
+    globalProperties.set(
+        mapOf(
+            "modelDocs" to "false"
+        )
+    )
+
+    skipValidateSpec.set(false)
+    logToStderr.set(true)
+    verbose.set(false)
 }
 
-application {
-    mainClass.set("ru.itmo.vk.Main")
+tasks.compileJava {
+    dependsOn(tasks.openApiGenerate)
 }
 
 tasks.jar {
+    dependsOn(tasks.openApiGenerate)
     manifest {
-        attributes["Main-Class"] = "ru.itmo.vk.Main"
+        attributes(
+            "Main-Class" to "ru.itmo.vk.Main"
+        )
+    }
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("all")
+    manifest {
+        attributes(
+            "Main-Class" to "ru.itmo.vk.Main"
+        )
     }
 }

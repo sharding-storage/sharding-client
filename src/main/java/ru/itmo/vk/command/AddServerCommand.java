@@ -2,10 +2,10 @@ package ru.itmo.vk.command;
 
 import ru.itmo.vk.client.Client;
 
-public class GetValueCommand extends Command {
-    public static final String NAME = "get";
+public class AddServerCommand extends Command{
+    public static final String NAME = "addServer";
 
-    protected GetValueCommand(Client client) {
+    protected AddServerCommand(Client client) {
         super(client);
     }
 
@@ -16,12 +16,12 @@ public class GetValueCommand extends Command {
             throw new IllegalArgumentException();
         }
 
-        var key = (String) args[0];
-        System.out.println("Полученное значение: " + super.getClient().getValue(key));
+        var address = (String) args[0];
+        System.out.println(super.getClient().addServer(address));
     }
 
     @Override
     public void helpInfo() {
-        System.out.println("<key> - получение значения по ключу");
+        System.out.println("<address> - добавление новой ноды");
     }
 }
