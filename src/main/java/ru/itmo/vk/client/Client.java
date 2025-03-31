@@ -36,6 +36,7 @@ public class Client {
         try {
             node.setValue(key, value);
         } catch (Exception e) {
+            System.out.println(e);
             refreshSchema();
             node.setValue(key, value);
         }
@@ -66,7 +67,7 @@ public class Client {
     public String addServer(String address) {
         try {
             var ans =  masterNode.addServer(address);
-            masterNode.refreshSchema();
+            refreshSchema();
             return ans;
         } catch (Exception e){
             return "Can't access server: " + e.getMessage();
@@ -76,7 +77,7 @@ public class Client {
     public String deleteServer(String address) {
         try {
             var ans = masterNode.deleteServer(address);
-            masterNode.refreshSchema();
+            refreshSchema();
             return ans;
         } catch (Exception e){
             return "Can't access server: " + e.getMessage();
@@ -86,7 +87,7 @@ public class Client {
     public String changeShards(int count) {
         try {
             var ans = masterNode.changeShards(count);
-            masterNode.refreshSchema();
+            refreshSchema();
             return ans;
         } catch (Exception e){
             return "Can't access server: " + e.getMessage();
