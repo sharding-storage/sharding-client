@@ -179,6 +179,11 @@ components:
             type: string
           description: List of schema information messages in right order of HashRing
           example: ["NODE1 ADDRESS", "NODE2 ADDRESS"]
+        virtualNodes:
+          type: integer
+          format: int32
+          description: number of virtual nodes
+          example: 4
     AllReply:
       type: object
       properties:
