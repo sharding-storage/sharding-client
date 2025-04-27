@@ -1,3 +1,5 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     id("java")
     id("org.openapi.generator") version "6.6.0"
@@ -64,25 +66,15 @@ sourceSets.main {
 
 openApiGenerate {
     generatorName.set("java")
-    inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
+    inputSpec.set("$projectDir/src/main/resources/master.yaml") // Default spec (optional)
     outputDir.set("${layout.buildDirectory.get()}/generated")
-    apiPackage.set("ru.itmo.sharding.api")
-    modelPackage.set("ru.itmo.sharding.model")
-    invokerPackage.set("ru.itmo.sharding.invoker")
     library.set("native")
+
     configOptions.set(
         mapOf(
             "library" to "native",
             "hideGenerationTimestamp" to "true",
             "openApiNullable" to "false",
-            //"dateLibrary" to "java8",
-            //"java8" to "true",
-            //"interfaceOnly" to "true",
-            //"useTags" to "true",
-            //"useSpringBoot3" to "true",
-            //"reactive" to "false",
-            //"serializationLibrary" to "jackson",
-            //"useBeanValidation" to "true",
         )
     )
 
@@ -97,8 +89,82 @@ openApiGenerate {
     verbose.set(false)
 }
 
+tasks.register("openApiGenerateSlave", GenerateTask::class) {
+    generatorName.set("java")
+    inputSpec.set("$projectDir/src/main/resources/slave.json")
+    outputDir.set("${layout.buildDirectory.get()}/generated/slave")
+    apiPackage.set("ru.itmo.sharding.slave.api")
+    modelPackage.set("ru.itmo.sharding.slave.model")
+    invokerPackage.set("ru.itmo.sharding.slave.invoker")
+
+    library.set("native")
+
+    configOptions.set(
+        mapOf(
+            "library" to "native",
+            "hideGenerationTimestamp" to "true",
+            "openApiNullable" to "false",
+        )
+    )
+
+    globalProperties.set(
+        mapOf(
+            "modelDocs" to "false"
+        )
+    )
+
+    skipValidateSpec.set(false)
+    logToStderr.set(true)
+    verbose.set(false)
+}
+
+tasks.register("openApiGenerateMaster", GenerateTask::class) {
+    generatorName.set("java")
+    inputSpec.set("$projectDir/src/main/resources/master.json")
+    outputDir.set("${layout.buildDirectory.get()}/generated/master")
+    apiPackage.set("ru.itmo.sharding.master.api")
+    modelPackage.set("ru.itmo.sharding.master.model")
+    invokerPackage.set("ru.itmo.sharding.master.invoker")
+
+    library.set("native")
+
+    configOptions.set(
+        mapOf(
+            "library" to "native",
+            "hideGenerationTimestamp" to "true",
+            "openApiNullable" to "false",
+        )
+    )
+
+    globalProperties.set(
+        mapOf(
+            "modelDocs" to "false"
+        )
+    )
+
+    skipValidateSpec.set(false)
+    logToStderr.set(true)
+    verbose.set(false)
+}
+
+tasks.register("openApiGenerateAll") {
+    dependsOn("openApiGenerateMaster", "openApiGenerateSlave")
+}
+
 tasks.compileJava {
-    dependsOn(tasks.openApiGenerate)
+    dependsOn("openApiGenerateAll")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs(
+                "src/main/java",
+                "${layout.buildDirectory.get()}/generated/master/src/main/java",
+                "${layout.buildDirectory.get()}/generated/slave/src/main/java"
+            )
+        }
+    }
 }
 
 tasks.jar {

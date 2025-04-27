@@ -3,7 +3,7 @@ package ru.itmo.vk.command;
 import ru.itmo.vk.client.Client;
 
 public class DeleteServerCommand extends Command{
-    public static final String NAME = "deleteServer";
+    public static final String NAME = "removeNode";
 
     protected DeleteServerCommand(Client client) {
         super(client);

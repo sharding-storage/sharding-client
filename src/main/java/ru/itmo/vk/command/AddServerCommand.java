@@ -3,7 +3,7 @@ package ru.itmo.vk.command;
 import ru.itmo.vk.client.Client;
 
 public class AddServerCommand extends Command{
-    public static final String NAME = "addServer";
+    public static final String NAME = "addNode";
 
     protected AddServerCommand(Client client) {
         super(client);

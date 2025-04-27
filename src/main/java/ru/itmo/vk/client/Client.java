@@ -20,25 +20,51 @@ public class Client {
 
     public String getValue(String key) {
         var node = getNode(key);
+        if (node == null) refreshSchema();
 
+        node = getNode(key);
         if (node == null) return null;
 
+        System.out.println("got node " + node);
+
         try {
-            return node.getValue(key);
+            System.out.println("first try");
+            var response = node.getValue(key);
+
+            if (response.getVersion() == null || response.getVersion() > masterNode.getVersion()) {
+                System.out.println("new version -> " + response.getVersion() + ", and old -> " + masterNode.getVersion());
+                throw new Exception("Updating version");
+            }
+
+            return response.getValue();
         } catch (Exception e) {
+            System.out.println("second try");
             refreshSchema();
-            return node.getValue(key);
+            node = getNode(key);
+            return node.getValue(key).getValue();
         }
     }
 
-    public void setValue(String key, String value) {
+    public void setValue(String key, String value) throws Exception {
         var node = getNode(key);
+        if (node == null) refreshSchema();
+
+        node = getNode(key);
+        if (node == null) {
+            throw new Exception("Нужно добавить хотя бы один сервер");
+        }
 
         try {
+            var version = node.getVersion();
+
+            if (version > masterNode.getVersion()) {
+                System.out.println("new version -> " + version + ", and old -> " + masterNode.getVersion());
+                throw new Exception("Updating version");
+            }
             node.setValue(key, value);
         } catch (Exception e) {
-            System.out.println(e);
             refreshSchema();
+            node = getNode(key);
             node.setValue(key, value);
         }
     }
@@ -64,14 +90,16 @@ public class Client {
         for (Node node : nodes) {
             addNode(node, virtualNodeCount);
         }
+        System.out.println("got new nodes: " + nodes);
+        System.out.println("got new virtual nodes: " + virtualNodeCount);
+        System.out.println("got new version: " + masterNode.getVersion());
     }
 
-    public SortedMap<Integer, Node> addNode(Node node, int virtualNodes) {
+    public void addNode(Node node, int virtualNodes) {
         for (int i = 0; i < virtualNodes; i++) {
             int hash = hashFunction.hash(node.toString() + "-" + i);
             circle.put(hash, node);
         }
-        return circle;
     }
 
     public String addServer(String address) {

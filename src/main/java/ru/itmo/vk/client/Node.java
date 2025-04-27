@@ -1,9 +1,10 @@
 package ru.itmo.vk.client;
 
 import lombok.SneakyThrows;
-import ru.itmo.sharding.api.StorageApi;
-import ru.itmo.sharding.invoker.ApiClient;
-import ru.itmo.sharding.model.KeyValueRequest;
+import ru.itmo.sharding.slave.api.StorageApi;
+import ru.itmo.sharding.slave.invoker.ApiClient;
+import ru.itmo.sharding.slave.model.KeyValueRequest;
+import ru.itmo.sharding.slave.model.ValueResponse;
 
 public class Node extends AbstractNode{
 
@@ -23,8 +24,8 @@ public class Node extends AbstractNode{
     }
 
     @SneakyThrows
-    public String getValue(String key) {
-        return storageApi.getValue(key).getValue();
+    public ValueResponse getValue(String key) {
+        return storageApi.getValue(key);
     }
 
     @SneakyThrows
@@ -33,6 +34,11 @@ public class Node extends AbstractNode{
         request.setValue(value);
 
         storageApi.setValue(key, request);
+    }
+
+    @SneakyThrows
+    public int getVersion() {
+        return storageApi.getVersion().getVersion();
     }
 
     @Override
