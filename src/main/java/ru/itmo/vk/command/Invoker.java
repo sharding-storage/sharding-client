@@ -27,9 +27,10 @@ public class Invoker {
 
                 var args = scanner.nextLine().split(" ");
                 if (args[0].equals("help")) throw new NoSuchMethodException();
+                if (!commandHashMap.containsKey(args[0])) {throw new NoSuchMethodException();}
+
                 commandHashMap.get(args[0]).execute(Arrays.stream(args).skip(1).toArray());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
                 printHelp();
             }
         }
@@ -39,6 +40,7 @@ public class Invoker {
         commandHashMap.put(GetValueCommand.NAME, new GetValueCommand(client));
         commandHashMap.put(SetValueCommand.NAME, new SetValueCommand(client));
         commandHashMap.put(ExitCommand.NAME, new ExitCommand());
+        commandHashMap.put(SchemaPrintCommand.NAME, new SchemaPrintCommand(client));
         commandHashMap.put(AddServerCommand.NAME, new AddServerCommand(client));
         commandHashMap.put(DeleteServerCommand.NAME, new DeleteServerCommand(client));
         commandHashMap.put(ChangeShardsCountCommand.NAME, new ChangeShardsCountCommand(client));

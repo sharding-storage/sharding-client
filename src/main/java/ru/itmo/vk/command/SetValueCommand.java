@@ -16,7 +16,12 @@ public class SetValueCommand extends Command {
             throw new IllegalArgumentException();
         }
 
-        super.getClient().setValue((String) args[0], (String) args[1]);
+        try {
+            super.getClient().setValue((String) args[0], (String) args[1]);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
 
         System.out.println("Новое значение успешно выставлено");
     }

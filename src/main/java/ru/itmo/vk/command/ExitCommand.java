@@ -1,6 +1,6 @@
 package ru.itmo.vk.command;
 
-public class ExitCommand extends Command{
+public class ExitCommand extends Command {
     public static final String NAME = "exit";
 
     @Override

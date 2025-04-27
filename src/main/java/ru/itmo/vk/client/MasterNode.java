@@ -2,21 +2,22 @@ package ru.itmo.vk.client;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import ru.itmo.sharding.api.MainApi;
-import ru.itmo.sharding.invoker.ApiClient;
-import ru.itmo.sharding.model.NodeRequest;
-import ru.itmo.sharding.model.ShardRequest;
+import ru.itmo.sharding.master.api.MainApi;
+import ru.itmo.sharding.master.invoker.ApiClient;
+import ru.itmo.sharding.master.model.ChangeShardRequest;
+import ru.itmo.sharding.master.model.NodeRequest;
 
 import java.util.List;
 
 public class MasterNode extends AbstractNode {
 
+    private final MainApi mainApi;
     @Getter
     private List<Node> nodes;
     @Getter
     private int virtualNodes;
-
-    private final MainApi mainApi;
+    @Getter
+    private int version;
 
     public MasterNode(String address) {
         super(address);
@@ -25,10 +26,10 @@ public class MasterNode extends AbstractNode {
         if (ip.length != 2) {
             throw new IllegalArgumentException("Адрес должен состоять из адреса и порта, например 127.0.0.1:8001");
         }
-        int port = 0;
+        int port;
         try {
             port = Integer.parseInt(ip[1]);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalArgumentException("Что-то не так с портом!");
         }
 
@@ -39,6 +40,8 @@ public class MasterNode extends AbstractNode {
         client.setPort(port);
 
         mainApi = new MainApi(client);
+
+        version = 1;
     }
 
     @SneakyThrows
@@ -50,8 +53,9 @@ public class MasterNode extends AbstractNode {
         }
 
         nodes = addresses.stream()
-            .map(Node::new).toList();
+                .map(Node::new).toList();
         virtualNodes = response.getVirtualNodes();
+        setVersion(response.getVersion());
     }
 
     @SneakyThrows
@@ -69,10 +73,15 @@ public class MasterNode extends AbstractNode {
 
     @SneakyThrows
     public String changeShards(int count) {
-        var request = new ShardRequest();
+        var request = new ChangeShardRequest();
         request.setShardCount(count);
 
         return mainApi.updateShards(request).getAnswer();
     }
 
+    public void setVersion(int version) {
+        if (this.version < version) {
+            this.version = version;
+        }
+    }
 }
