@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.itmo.vk.hash.HashFunction;
 
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -58,10 +59,19 @@ public class Client {
     public void refreshSchema() {
         circle.clear();
         masterNode.refreshSchema();
+        List<Node> nodes = masterNode.getNodes();
+        int virtualNodeCount = masterNode.getVirtualNodes();
+        for (Node node : nodes) {
+            addNode(node, virtualNodeCount);
+        }
+    }
 
-        masterNode.getNodes().forEach((node) -> {
-            circle.put(hashFunction.hash(node.getAddress()), node);
-        });
+    public SortedMap<Integer, Node> addNode(Node node, int virtualNodes) {
+        for (int i = 0; i < virtualNodes; i++) {
+            int hash = hashFunction.hash(node.toString() + "-" + i);
+            circle.put(hash, node);
+        }
+        return circle;
     }
 
     public String addServer(String address) {

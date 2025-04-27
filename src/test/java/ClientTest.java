@@ -90,6 +90,7 @@ class ClientTest {
         Node node2 = new Node("192.168.1.147:5002");
         when(hashFunction.hash("key3")).thenReturn(789);
         when(masterNode.getNodes()).thenReturn(List.of(node1, node2));
+        when(masterNode.getVirtualNodes()).thenReturn(1);
 
         client.refreshSchema();
         Node result = client.getNode("key3");
@@ -102,7 +103,7 @@ class ClientTest {
         Node node1 = new Node("192.168.1.147:5001");
         Node node2 = new Node("192.168.1.147:5002");
         when(masterNode.getNodes()).thenReturn(List.of(node1, node2));
-
+        when(masterNode.getVirtualNodes()).thenReturn(1);
         client.refreshSchema();
 
         assertThat(client.getCircle().size(), is(2));

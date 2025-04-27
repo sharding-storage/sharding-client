@@ -13,6 +13,8 @@ public class MasterNode extends AbstractNode {
 
     @Getter
     private List<Node> nodes;
+    @Getter
+    private int virtualNodes;
 
     private final MainApi mainApi;
 
@@ -41,13 +43,15 @@ public class MasterNode extends AbstractNode {
 
     @SneakyThrows
     public void refreshSchema() {
-        var addresses = mainApi.refreshSchema().getNodes();
+        var response = mainApi.refreshSchema();
+        var addresses = response.getNodes();
         if (addresses == null || addresses.isEmpty()) {
             nodes = List.of();
         }
 
         nodes = addresses.stream()
             .map(Node::new).toList();
+        virtualNodes = response.getVirtualNodes();
     }
 
     @SneakyThrows

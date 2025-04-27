@@ -35,4 +35,8 @@ public class Node extends AbstractNode{
         storageApi.setValue(key, request);
     }
 
+    @Override
+    public String toString() {
+        return super.getAddress();
+    }
 }
