@@ -19,6 +19,8 @@ public class SchemaPrintCommand extends Command {
         System.out.println("Полученные ноды: " + super.getClient().getMasterNode().getNodes());
         System.out.println("Кол-во виртуальных нод: " + super.getClient().getMasterNode().getVirtualNodes());
         System.out.println("Версия схемы: " + super.getClient().getMasterNode().getVersion());
+        System.out.println("Топология: ");
+        super.getClient().printAllHashRanges();
     }
 
     @Override

@@ -6,12 +6,16 @@ import ru.itmo.sharding.slave.invoker.ApiClient;
 import ru.itmo.sharding.slave.model.KeyValueRequest;
 import ru.itmo.sharding.slave.model.ValueResponse;
 
+import java.util.Map;
+
 public class Node extends AbstractNode{
 
+    private final Map<String, String> salts;
     private final StorageApi storageApi;
 
-    public Node(String address) {
+    public Node(String address, Map<String, String> salts) {
         super(address);
+        this.salts = salts;
 
         var client = new ApiClient();
         client.setScheme("http");
@@ -45,4 +49,25 @@ public class Node extends AbstractNode{
     public String toString() {
         return super.getAddress();
     }
+
+    public Map<String, String> getSalts() {
+        return salts;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Node)) {
+            return false;
+        }
+        return getAddress().equals(((Node) other).getAddress());
+    }
+
+    @Override
+    public int hashCode() {
+        return getAddress().hashCode();
+    }
+
 }
