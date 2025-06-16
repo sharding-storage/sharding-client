@@ -64,31 +64,6 @@ sourceSets.main {
     )
 }
 
-openApiGenerate {
-    generatorName.set("java")
-    inputSpec.set("$projectDir/src/main/resources/master.yaml") // Default spec (optional)
-    outputDir.set("${layout.buildDirectory.get()}/generated")
-    library.set("native")
-
-    configOptions.set(
-        mapOf(
-            "library" to "native",
-            "hideGenerationTimestamp" to "true",
-            "openApiNullable" to "false",
-        )
-    )
-
-    globalProperties.set(
-        mapOf(
-            "modelDocs" to "false"
-        )
-    )
-
-    skipValidateSpec.set(false)
-    logToStderr.set(true)
-    verbose.set(false)
-}
-
 tasks.register("openApiGenerateSlave", GenerateTask::class) {
     generatorName.set("java")
     inputSpec.set("$projectDir/src/main/resources/slave.json")

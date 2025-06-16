@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.itmo.vk.hash.HashFunction;
 
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 @Slf4j
 @Getter
@@ -97,7 +95,7 @@ public class Client {
 
     public void addNode(Node node, int virtualNodes) {
         for (int i = 0; i < virtualNodes; i++) {
-            int hash = hashFunction.hash(node.toString() + "-" + i);
+            int hash = hashFunction.hash(node.toString() + "-" + node.getSalts().getOrDefault("" + i, "" + i));
             circle.put(hash, node);
         }
     }
@@ -132,5 +130,51 @@ public class Client {
         }
     }
 
+    public void printAllHashRanges() {
+        masterNode.getNodes().forEach(e ->
+            System.out.println(e.toString() + ": " + getHashRanges(e))
+        );
+    }
 
+    private List<HashRange> getHashRanges(Node node) {
+        List<HashRange> ranges = new ArrayList<>();
+        if (circle.isEmpty()) {
+            return ranges;
+        }
+
+        // Собираем все хэши для данного узла
+        List<Integer> nodeHashes = new ArrayList<>();
+        for (Map.Entry<Integer, Node> entry : circle.entrySet()) {
+            if (entry.getValue().equals(node)) {
+                nodeHashes.add(entry.getKey());
+            }
+        }
+
+        if (nodeHashes.isEmpty()) {
+            return ranges;
+        }
+
+        Collections.sort(nodeHashes);
+
+        for (Integer hash : nodeHashes) {
+            SortedMap<Integer, Node> headMap = circle.headMap(hash);
+            int startHash;
+            if (headMap.isEmpty()) {
+                if (!circle.get(circle.lastKey()).equals(node)) {
+                    startHash = circle.lastKey() + 1;
+                } else {
+                    startHash = circle.lastKey();
+                }
+            } else {
+                if (!headMap.get(headMap.lastKey()).equals(node)) {
+                    startHash = headMap.lastKey() + 1;
+                } else {
+                    startHash = headMap.lastKey();
+                }
+            }
+            ranges.add(new HashRange(startHash, hash));
+        }
+
+        return ranges;
+    }
 }

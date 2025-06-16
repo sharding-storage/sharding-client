@@ -53,7 +53,7 @@ public class MasterNode extends AbstractNode {
         }
 
         nodes = addresses.stream()
-                .map(Node::new).toList();
+                .map(e -> new Node(e.getAddress(), e.getSalts())).toList();
         virtualNodes = response.getVirtualNodes();
         setVersion(response.getVersion());
     }

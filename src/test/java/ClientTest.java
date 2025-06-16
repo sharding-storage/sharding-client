@@ -8,6 +8,7 @@ import ru.itmo.vk.client.Node;
 import ru.itmo.vk.hash.HashFunction;
 import ru.itmo.vk.hash.MD5HashFunction;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -82,8 +83,8 @@ class ClientTest {
 
     @Test
     void testGetNode() {
-        Node node1 = new Node("192.168.1.147:5001");
-        Node node2 = new Node("192.168.1.147:5002");
+        Node node1 = new Node("192.168.1.147:5001", new HashMap<>());
+        Node node2 = new Node("192.168.1.147:5002", new HashMap<>());
         when(hashFunction.hash("key3")).thenReturn(789);
         when(masterNode.getNodes()).thenReturn(List.of(node1, node2));
         when(masterNode.getVirtualNodes()).thenReturn(1);
@@ -96,8 +97,8 @@ class ClientTest {
 
     @Test
     void testRefreshSchema() {
-        Node node1 = new Node("192.168.1.147:5001");
-        Node node2 = new Node("192.168.1.147:5002");
+        Node node1 = new Node("192.168.1.147:5001", new HashMap<>());
+        Node node2 = new Node("192.168.1.147:5002", new HashMap<>());
         when(masterNode.getNodes()).thenReturn(List.of(node1, node2));
         when(masterNode.getVirtualNodes()).thenReturn(1);
         client.refreshSchema();
