@@ -1,4 +1,4 @@
-FROM openjdk:21-jdk-slim as builder
+FROM eclipse-temurin:21 as builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ COPY src/ src/
 RUN ./gradlew clean shadowJar --no-daemon && \
     rm -rf /root/.gradle
 
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21
 
 WORKDIR /app
 
